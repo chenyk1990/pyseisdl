@@ -17,7 +17,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pyseisdl as dl #dl: dictionary learning
-
+import time
 ## generate the synthetic data
 a1=np.zeros([300,20])
 [n,m]=a1.shape
@@ -80,19 +80,20 @@ print(np.std(dn))
 # the computational difference is larger when T is larger
 param={'T':2,'niter':10,'mode':1,'K':64};
 mode=1;l1=4;l2=4;l3=4;s1=2;s2=2;s3=2;perc=1; 
+t1 = time.time()
 [d1,D,G,dct]=dl.sgk_denoise(dn,mode,[l1,l2,l3],[s1,s2,s3],perc,param);
+t2 = time.time()
+print('SGK takes %.2g seconds'%(t2-t1));
 
 ## benchmark with KSVD
-# [d2,D2,G2,dc2]=ksvd_denoise(d,mode,[l1,l2,l3],[s1,s2,s3],perc,param);
-d2=d1;
+t1 = time.time()
+param={'T':2,'niter':10,'mode':1,'K':64};
+[d2,D2,G2,dct2]=dl.ksvd_denoise(dn,mode,[l1,l2,l3],[s1,s2,s3],perc,param);
+t2 = time.time()
+print('KSVD takes %.2g seconds'%(t2-t1));
 
-
-# d1=dl.drr3d(dn,0,120,0.004,3,100);	#RR
 noi1=dn-d1;
-# 
-# d2=dl.drr3d(dn,0,120,0.004,3,3);	#DRR
 noi2=dn-d2;
-# 
 
 ## compare with matlab
 import scipy

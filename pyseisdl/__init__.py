@@ -13,7 +13,9 @@ __version__ = "0.0.0"
 from .ksvd import ksvd
 from .sgk import sgk
 from .denoise import sgk_denoise
+from .denoise import ksvd_denoise
 from .snr import snr
+
 
 
 

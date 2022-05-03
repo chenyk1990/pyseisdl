@@ -1,31 +1,28 @@
 import numpy as np
 def patch2d( A,mode=1,l1=8,l2=8,s1=4,s2=4 ):
-	#decompose the image into patches:
-	#  
-	# by Yangkang Chen
-	# Oct, 2017
-	#
-	# Input: 
-	#   D: input image
-	#   mode: patching mode
-	#   l1: first patch size
-	#   l2: second patch size
-	#   s1: first shifting size
-	#   s2: second shifting size
-	#   
-	# Output:
-	#   X: patches
-	# 
-	# Modified on Dec 12, 2018 (the edge issue, arbitrary size for the matrix)
-	# 		      Dec 31, 2018 (tmp1=mod(n1,l1) -> tmp1=mod(n1-l1,s1))
-	# 
-	# Examples:
-	#    ~/chenyk/published/sgk/matfun/demo_omp.m
-
-	#	# patch size l1*l2
-	#l1=8;l2=8;
-	#
-
+	"""
+	patch2d: decompose the image into patches:
+	 
+	by Yangkang Chen
+	Oct, 2017
+	
+	Input 
+	  D: input image
+	  mode: patching mode
+	  l1: first patch size
+	  l2: second patch size
+	  s1: first shifting size
+	  s2: second shifting size
+	  
+	Output
+	  X: patches
+	
+	Modified on Dec 12, 2018 (the edge issue, arbitrary size for the matrix)
+			      Dec 31, 2018 (tmp1=mod(n1,l1) -> tmp1=mod(n1-l1,s1))
+	
+	Example
+	sgk_denoise() in pyseisdl/denoise.py
+	"""
 	[n1,n2]=A.shape;
 
 	if mode==1: 	#possible for other patching options
@@ -52,30 +49,31 @@ def patch2d( A,mode=1,l1=8,l2=8,s1=4,s2=4 ):
 
 
 def patch3d(A, mode,l1=4,l2=4,l3=4,s1=2,s2=2,s3=2):
-	#decompose 3D data into patches:
-	#
-	# by Yangkang Chen
-	# March, 2020
-	#
-	# Input:
-	#   D: input image
-	#   mode: patching mode
-	#   l1: first patch size
-	#   l2: second patch size
-	#   l3: third patch size
-	#   s1: first shifting size
-	#   s2: second shifting size
-	#   s3: third shifting size
-	#
-	# Output:
-	#   X: patches
-	#
-	# Modified on Dec 12, 2018 (the edge issue, arbitrary size for the matrix)
-	# 		      Dec 31, 2018 (tmp1=mod(n1,l1) -> tmp1=mod(n1-l1,s1))
-	# 
-	#	# patch size l1*l2*l3
-	#l1=4;l2=4;l3=4;
-	#
+	"""
+	patch3d: decompose 3D data into patches:
+	
+	by Yangkang Chen
+	March, 2020
+	
+	Input
+	  D: input image
+	  mode: patching mode
+	  l1: first patch size
+	  l2: second patch size
+	  l3: third patch size
+	  s1: first shifting size
+	  s2: second shifting size
+	  s3: third shifting size
+	
+	Output
+	  X: patches
+	
+	Modified on Dec 12, 2018 (the edge issue, arbitrary size for the matrix)
+			      Dec 31, 2018 (tmp1=mod(n1,l1) -> tmp1=mod(n1-l1,s1))
+	
+	Example
+	sgk_denoise() in pyseisdl/denoise.py
+	"""
 
 	[n1,n2,n3]=A.shape;
 
@@ -110,31 +108,30 @@ def patch3d(A, mode,l1=4,l2=4,l3=4,s1=2,s2=2,s3=2):
 
 
 def patch2d_inv( X,mode,n1,n2,l1=8,l2=8,s1=4,s2=4 ):
-	# insert patches into the image
-	#  
-	# by Yangkang Chen
-	# Oct, 2017
-	#
-	# Input: 
-	#   D: input image
-	#   mode: patching mode
-	#   l1: first patch size
-	#   l2: second patch size
-	#   s1: first shifting size
-	#   s2: second shifting size
-	#   
-	# Output:
-	#   X: patches
-	# 
-	# Modified on Dec 12, 2018 (the edge issue, arbitrary size for the matrix)
-	# 			  Dec 31, 2018 (tmp1=mod(n1,l1) -> tmp1=mod(n1-l1,s1))
-	# 
-	# Examples:
-	#    ~/chenyk/published/sgk/matfun/demo_omp.m
+	"""
+	patch2d_inv: insert patches into the image
+	 
+	by Yangkang Chen
+	Oct, 2017
+	
+	Input 
+	  D: input image
+	  mode: patching mode
+	  l1: first patch size
+	  l2: second patch size
+	  s1: first shifting size
+	  s2: second shifting size
+	  
+	Output
+	  X: patches
+	
+	Modified on Dec 12, 2018 (the edge issue, arbitrary size for the matrix)
+				  Dec 31, 2018 (tmp1=mod(n1,l1) -> tmp1=mod(n1-l1,s1))
+	
+	Example
+	sgk_denoise() in pyseisdl/denoise.py
 
-	#	# patch size l1*l2
-	#l1=8;l2=8;
-	#
+	"""
 
 	if mode==1: 	#possible for other patching options
 
@@ -174,36 +171,36 @@ def patch2d_inv( X,mode,n1,n2,l1=8,l2=8,s1=4,s2=4 ):
 
 
 def patch3d_inv( X,mode,n1,n2,n3,l1=4,l2=4,l3=4,s1=2,s2=2,s3=2 ):
-	# insert patches into the 3D data
-	#
-	# by Yangkang Chen
-	# March, 2020
-	#
-	# Input:
-	#   D: input image
-	#   mode: patching mode
-	#   n1: first dimension size
-	#   n1: second dimension size
-	#   n3: third dimension size
-	#   l1: first patch size
-	#   l2: second patch size
-	#   l3: third patch size
-	#   s1: first shifting size
-	#   s2: second shifting size
-	#   s3: third shifting size
-	#
-	# Output:
-	#   X: patches
-	#
-	# Modified on Dec 12, 2018 (the edge issue, arbitrary size for the matrix)
-	# 		      Dec 31, 2018 (tmp1=mod(n1,l1) -> tmp1=mod(n1-l1,s1))
-	#             Marich, 31, 2020, 2D->3D
-	#
-	# 
+	"""
+	patch3d_inv: insert patches into the 3D data
+	
+	by Yangkang Chen
+	March, 2020
+	
+	Input
+	  D: input image
+	  mode: patching mode
+	  n1: first dimension size
+	  n1: second dimension size
+	  n3: third dimension size
+	  l1: first patch size
+	  l2: second patch size
+	  l3: third patch size
+	  s1: first shifting size
+	  s2: second shifting size
+	  s3: third shifting size
+	
+	Output
+	  X: patches
+	
+	Modified on Dec 12, 2018 (the edge issue, arbitrary size for the matrix)
+			      Dec 31, 2018 (tmp1=mod(n1,l1) -> tmp1=mod(n1-l1,s1))
+	            Marich, 31, 2020, 2D->3D
+	
+	Example
+	sgk_denoise() in pyseisdl/denoise.py
 
-	#	# patch size l1*l2*l3
-	#l1=4;l2=4;l3=4;
-	#
+	"""
 
 	if mode==1: 	#possible for other patching options
 	
@@ -251,41 +248,38 @@ def patch3d_inv( X,mode,n1,n2,n3,l1=4,l2=4,l3=4,s1=2,s2=2,s3=2 ):
 	return A
 
 
-def patch5d( A,mode,l1=4,l2=4,l3=4,l4=4,l5=4,s1=2,s2=2,s3=2,s4=2,s5=2):
-	#decompose 4D/5D data into patches:
-	#
-	# by Yangkang Chen
-	# March, 2020
-	#
-	# Input:
-	#   D: input image
-	#   mode: patching mode
-	#   l1: first patch size
-	#   l2: second patch size
-	#   l3: third patch size
-	#   l4: fourth patch size
-	#   l5: fifth patch size	(when n5=1, l5=1, s5=0)
-	#   s1: first shifting size
-	#   s2: second shifting size
-	#   s3: third shifting size
-	#   s4: fourth shifting size
-	#   s5: fifth shifting size (when n5=1, l5=1, s5=0)
-	#
-	# Output:
-	#   X: patches
-	#
-	# Modified on Dec 12, 2018 (the edge issue, arbitrary size for the matrix)
-	# 			  Dec 31, 2018 (tmp1=mod(n1,l1) -> tmp1=mod(n1-l1,s1))
-	#             April 2, 2020 (3D-5D)
-	#
-	# Examples:
-	#    ~/test/test_yc_ksvd_denoise3d.m
-	#    ~/test/test_yc_ksvd_denoise5d.m
-	#    ~/test/test_yc_ksvd_recon5d.m
-	#
-	#	# patch size l1*l2*l3*l4*l5
-	#l1=4;l2=4;l3=4;l4=4;l5=4;
-	#
+def patch5d(A,mode,l1=4,l2=4,l3=4,l4=4,l5=4,s1=2,s2=2,s3=2,s4=2,s5=2):
+	"""
+	patch5d: decompose 4D/5D data into patches:
+	
+	by Yangkang Chen
+	March, 2020
+	
+	Input
+	  D: input image
+	  mode: patching mode
+	  l1: first patch size
+	  l2: second patch size
+	  l3: third patch size
+	  l4: fourth patch size
+	  l5: fifth patch size	(when n5=1, l5=1, s5=0)
+	  s1: first shifting size
+	  s2: second shifting size
+	  s3: third shifting size
+	  s4: fourth shifting size
+	  s5: fifth shifting size (when n5=1, l5=1, s5=0)
+	
+	Output
+	  X: patches
+	
+	Modified on Dec 12, 2018 (the edge issue, arbitrary size for the matrix)
+				  Dec 31, 2018 (tmp1=mod(n1,l1) -> tmp1=mod(n1-l1,s1))
+	            April 2, 2020 (3D-5D)
+	
+	Example
+	sgk_denoise() in pyseisdl/denoise.py
+
+	"""
 
 	[n1,n2,n3,n4,n5]=A.shape;
 
@@ -326,46 +320,43 @@ def patch5d( A,mode,l1=4,l2=4,l3=4,l4=4,l5=4,s1=2,s2=2,s3=2,s4=2,s5=2):
 	return X
 
 def patch5d_inv( X,mode,n1,n2,n3,n4,n5,l1=4,l2=4,l3=4,l4=4,l5=4,s1=2,s2=2,s3=2,s4=2,s5=2):
-	# insert patches into the 4D/5D data
-	#
-	# by Yangkang Chen
-	# April, 2020
-	#
-	# Input:
-	#   D: input image
-	#   mode: patching mode
-	#   n1: first dimension size
-	#   n1: second dimension size
-	#   n3: third dimension size
-	#   n4: forth dimension size
-	#   n5: fifth dimension size
-	#   l1: first patch size
-	#   l2: second patch size
-	#   l3: third patch size
-	#   l4: fourth patch size
-	#   l5: fifth patch size	(when n5=1, l5=1, s5=0)
-	#   s1: first shifting size
-	#   s2: second shifting size
-	#   s3: third shifting size
-	#   s4: fourth shifting size
-	#   s5: fifth shifting size (when n5=1, l5=1, s5=0)
-	#   
-	# Output:
-	#   X: patches
-	#
-	# Modified on Dec 12, 2018 (the edge issue, arbitrary size for the matrix)
-	# 			  Dec 31, 2018 (tmp1=mod(n1,l1) -> tmp1=mod(n1-l1,s1))
-	#             Marich, 31, 2020, 2D->3D
-	#             April 2, 2020 (3D-5D)
-	#
-	# Examples:
-	#    ~/test/test_yc_ksvd_denoise3d.m
-	#    ~/test/test_yc_ksvd_denoise5d.m
-	#    ~/test/test_yc_ksvd_recon5d.m
+	"""
+	patch5d_inv: insert patches into the 4D/5D data
+	
+	by Yangkang Chen
+	April, 2020
+	
+	Input
+	  D: input image
+	  mode: patching mode
+	  n1: first dimension size
+	  n1: second dimension size
+	  n3: third dimension size
+	  n4: forth dimension size
+	  n5: fifth dimension size
+	  l1: first patch size
+	  l2: second patch size
+	  l3: third patch size
+	  l4: fourth patch size
+	  l5: fifth patch size	(when n5=1, l5=1, s5=0)
+	  s1: first shifting size
+	  s2: second shifting size
+	  s3: third shifting size
+	  s4: fourth shifting size
+	  s5: fifth shifting size (when n5=1, l5=1, s5=0)
+	  
+	Output
+	  X: patches
+	
+	Modified on Dec 12, 2018 (the edge issue, arbitrary size for the matrix)
+				  Dec 31, 2018 (tmp1=mod(n1,l1) -> tmp1=mod(n1-l1,s1))
+	            Marich, 31, 2020, 2D->3D
+	            April 2, 2020 (3D-5D)
+	
+	Example
+	sgk_denoise() in pyseisdl/denoise.py
 
-	#	# patch size l1*l2*l3*l4*l5
-	#l1=4;l2=4;l3=4;l4=4;l5=4;
-	#
+	"""
 
 	if mode==1: 	#possible for other patching options
 		tmp1=np.mod(n1-l1,s1);

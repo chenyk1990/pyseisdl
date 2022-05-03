@@ -1,28 +1,31 @@
 import numpy as np
 def sgk(X,param):
-	# sgk: SGK algorithm
-	# BY Yangkang Chen
-	# Jan, 2020
-	# Ported to Python in May, 2022
-	# 
-	# INPUT
-	# X:     input training samples
-	# param: parameter struct
-	#   param.mode=1;   	#1: sparsity; 0: error
-	#   param.niter=10; 	#number of SGK iterations to perform; default: 10
-	#   param.D=DCT;    	#initial D
-	#   param.T=3;      	#sparsity level
-	#
-	# OUTPUT
-	# D:    learned dictionary
-	# G:    sparse coefficients
-	#
-	# for X=DG
-	# size of X: MxN
-	# size of D: MxK
-	# size of G: KxN
-	#
-	# DEMO: demos/test_sgk_denoise.py
+	"""
+	sgk: SGK algorithm
+	BY Yangkang Chen
+	Jan, 2020
+	Ported to Python in May, 2022
+	
+	INPUT
+	X:     input training samples
+	param: parameter struct
+	  param.mode=1;   	#1: sparsity; 0: error
+	  param.niter=10; 	#number of SGK iterations to perform; default: 10
+	  param.D=DCT;    	#initial D
+	  param.T=3;      	#sparsity level
+	
+	OUTPUT
+	D:    learned dictionary
+	G:    sparse coefficients
+	
+	for X=DG
+	size of X: MxN
+	size of D: MxK
+	size of G: KxN
+	
+	DEMO
+	demos/test_pyseisdl_sgk3d.py
+	"""
 
 	T=param['T'];	#T=1; 	#requred by SGK
 	niter=param['niter'];
@@ -43,7 +46,7 @@ def sgk(X,param):
 			#error defined sparse coding
 			pass;
 			
-		for ik in range(0,K): 	#KSVD iteration, K times SVD 
+		for ik in range(0,K): 	#SGK iteration, K times means 
 			inds,=np.where(G[ik,:]!=0);
 			if inds.shape[0]!=0:		#empty array
 				D[:,ik]=np.sum(X[:,inds],1);	#better using a weighted summation ? NO, equivalent 
@@ -55,9 +58,11 @@ def sgk(X,param):
 	return D,G
 
 def ompN( D, X, K ):
-	#multi-column sparse coding
-	# BY Yangkang Chen
-	# Jan, 2020
+	"""
+	multi-column sparse coding
+	BY Yangkang Chen
+	Jan, 2020
+	"""
 	[n1,n2]=X.shape
 	[n1,n3]=D.shape
 	G=np.zeros([n3,n2]);
@@ -71,18 +76,20 @@ def ompN( D, X, K ):
 	return G
 
 def omp_e( D, x ):
-	# yc_omp0: Most basic orthogonal matching pursuit for sparse coding
-	# this simple tutorial code use the sparseity-constrained sparse coding
-	# model
+	"""
+	omp_e: Most basic orthogonal matching pursuit for sparse coding
+	this simple tutorial code use the sparseity-constrained sparse coding
+	model
 	#
-	# two version of sparse coding problems:
-	# 1) Sparseity-constrained sparse coding problem
-	#   gamma = min |x-Dg|_2^2  s.t. |g|_0 <= K
-	# 2) Error-constrained sparse coding problem
-	#   gamma = min |g|_0	   s.t. |x-Dg|_2^2 <=eps
+	two version of sparse coding problems:
+	1) Sparseity-constrained sparse coding problem
+	  gamma = min |x-Dg|_2^2  s.t. |g|_0 <= K
+	2) Error-constrained sparse coding problem
+	  gamma = min |g|_0	   s.t. |x-Dg|_2^2 <=eps
 	#
-	# Author: Yangkang Chen
-	# Oct 25, 2016
+	Author: Yangkang Chen
+	Oct 25, 2016
+	"""
 	[n1,n2]=D.shape;
 	g=np.zeros(n2);
 
@@ -103,13 +110,14 @@ def omp_e( D, x ):
 
 
 def spray( G, n ):
-	#multi-column sparse coding
-	# BY Yangkang Chen
-	# Jan, 2020
-	# G: row or column vector
-	# axis: 1 or 2
-	# n:  size
-
+	"""
+	multi-column sparse coding
+	BY Yangkang Chen
+	Jan, 2020
+	G: row or column vector
+	axis: 1 or 2
+	n:  size
+	"""
 	[n1,n2]=G.shape;
 	if n1==1: 	#row vector, axis=1
 		G2=np.zeros([n,n2]);
@@ -122,19 +130,20 @@ def spray( G, n ):
 	return G2
 
 def omp0( D, x, K ):
-	# yc_omp0: Most basic orthogonal matching pursuit for sparse coding
-	# this simple tutorial code use the sparseity-constrained sparse coding
-	# model
-	# 
-	# two version of sparse coding problems:
-	# 1) Sparseity-constrained sparse coding problem
-	#   gamma = min |x-Dg|_2^2  s.t. |g|_0 <= K 
-	# 2) Error-constrained sparse coding problem
-	#   gamma = min |g|_0	   s.t. |x-Dg|_2^2 <=eps
-	# 
-	# Author: Yangkang Chen
-	# Oct 25, 2016
-
+	"""
+	omp0: Most basic orthogonal matching pursuit for sparse coding
+	this simple tutorial code use the sparseity-constrained sparse coding
+	model
+	
+	two version of sparse coding problems:
+	1) Sparseity-constrained sparse coding problem
+	  gamma = min |x-Dg|_2^2  s.t. |g|_0 <= K 
+	2) Error-constrained sparse coding problem
+	  gamma = min |g|_0	   s.t. |x-Dg|_2^2 <=eps
+	
+	Author: Yangkang Chen
+	Oct 25, 2016
+	"""
 	[n1,n2]=D.shape;
 	I=[];
 	r=x;
@@ -149,10 +158,6 @@ def omp0( D, x, K ):
 					mmax=dtr;
 					k=i2;
 		I.append(k);
-# 		print('I',I)
-# 		print('D[:,I]',D[:,I])
-# 		print(np.matmul(D[:,I].transpose(),D[:,I]))
-# 		print('in inv',np.matmul(D[:,I].transpose(),D[:,I]))
 		g[I]=np.matmul(np.linalg.inv(np.matmul(D[:,I].transpose(),D[:,I])),np.matmul(D[:,I].transpose(),x)); 	#g_I = D_I^{+}x, D_I^TD_I is guaranteed to be non-singular 
 # 		print('Dg',D[:,I].shape,g[I].shape)
 		r=x-np.matmul(D[:,I],g[I]);
