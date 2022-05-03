@@ -78,48 +78,52 @@ print(np.std(dn))
 
 ## denoise using SGK %when K=3, SGK is even better than KSVD (13.23 dB)
 # the computational difference is larger when T is larger
-param={'T':2,'niter':10,'mode':1,'K':64);
+param={'T':2,'niter':10,'mode':1,'K':64};
 mode=1;l1=4;l2=4;l3=4;s1=2;s2=2;s3=2;perc=1; 
-[d1,D,G,dc]=sgk_denoise(d,mode,[l1,l2,l3],[s1,s2,s3],perc,param);
+[d1,D,G,dct]=dl.sgk_denoise(dn,mode,[l1,l2,l3],[s1,s2,s3],perc,param);
 
 ## benchmark with KSVD
-[d2,D2,G2,dc2]=ksvd_denoise(d,mode,[l1,l2,l3],[s1,s2,s3],perc,param);
+# [d2,D2,G2,dc2]=ksvd_denoise(d,mode,[l1,l2,l3],[s1,s2,s3],perc,param);
+d2=d1;
 
 
-
-
-# d1=pd.drr3d(dn,0,120,0.004,3,100);	#RR
-# noi1=dn-d1;
+# d1=dl.drr3d(dn,0,120,0.004,3,100);	#RR
+noi1=dn-d1;
 # 
-# d2=pd.drr3d(dn,0,120,0.004,3,3);	#DRR
-# noi2=dn-d2;
+# d2=dl.drr3d(dn,0,120,0.004,3,3);	#DRR
+noi2=dn-d2;
 # 
 
+## compare with matlab
+import scipy
+from scipy import io
+datas = {"dc":dc, "dn":dn, "d1": d1, "d2": d2}
+scipy.io.savemat("sgk3d.mat", datas)
 
 ## compare SNR
-print('SNR of Noisy is %g'%pd.snr(dc,dn,2));
-print('SNR of SGK is %g'%pd.snr(dc,d1,2));
-print('SNR of KSVD is %g'%pd.snr(dc,d2,2));
-# 
-# ## plotting
-# fig = plt.figure(figsize=(8, 7))
-# ax=fig.add_subplot(3, 2, 1)
-# plt.imshow(dn.transpose(0,2,1).reshape(n1,n2*n3),cmap='jet',clim=(-0.1, 0.1),aspect='auto');ax.set_xticks([]);ax.set_yticks([]);
-# plt.title('Noisy data');
-# ax=fig.add_subplot(3, 2, 3)
-# plt.imshow(d1.reshape(n1,n2*n3,order='F'),cmap='jet',clim=(-0.1, 0.1),aspect='auto');ax.set_xticks([]);ax.set_yticks([]);
-# plt.title('Denoised (RR, SNR=%.4g dB)'%pd.snr(dc,d1,2));
-# ax=fig.add_subplot(3, 2, 4)
-# plt.imshow(noi1.transpose(0,2,1).reshape(n1,n2*n3),cmap='jet',clim=(-0.1, 0.1),aspect='auto');ax.set_xticks([]);ax.set_yticks([]);
-# plt.title('Noise (RR)');
-# ax=fig.add_subplot(3, 2, 5)
-# plt.imshow(d2.reshape(n1,n2*n3,order='F'),cmap='jet',clim=(-0.1, 0.1),aspect='auto');ax.set_xticks([]);ax.set_yticks([]);
-# plt.title('Denoised (DRR, SNR=%.4g dB)'%pd.snr(dc,d2,2));
-# ax=fig.add_subplot(3, 2, 6)
-# plt.imshow(noi2.transpose(0,2,1).reshape(n1,n2*n3),cmap='jet',clim=(-0.1, 0.1),aspect='auto');ax.set_xticks([]);ax.set_yticks([]);
-# plt.title('Noise (DRR)');
-# plt.savefig('test_pydrr_drr3d.png',format='png',dpi=300);
-# plt.show()
+print('SNR of Noisy is %g'%dl.snr(dc,dn,2));
+print('SNR of SGK is %g'%dl.snr(dc,d1,2));
+print('SNR of KSVD is %g'%dl.snr(dc,d2,2));
+
+## plotting
+fig = plt.figure(figsize=(8, 7))
+ax=fig.add_subplot(3, 2, 1)
+plt.imshow(dn.transpose(0,2,1).reshape(n1,n2*n3),cmap='jet',clim=(-0.1, 0.1),aspect='auto');ax.set_xticks([]);ax.set_yticks([]);
+plt.title('Noisy data');
+ax=fig.add_subplot(3, 2, 3)
+plt.imshow(d1.reshape(n1,n2*n3,order='F'),cmap='jet',clim=(-0.1, 0.1),aspect='auto');ax.set_xticks([]);ax.set_yticks([]);
+plt.title('Denoised (SGK, SNR=%.4g dB)'%dl.snr(dc,d1,2));
+ax=fig.add_subplot(3, 2, 4)
+plt.imshow(noi1.transpose(0,2,1).reshape(n1,n2*n3),cmap='jet',clim=(-0.1, 0.1),aspect='auto');ax.set_xticks([]);ax.set_yticks([]);
+plt.title('Noise (SGK)');
+ax=fig.add_subplot(3, 2, 5)
+plt.imshow(d2.reshape(n1,n2*n3,order='F'),cmap='jet',clim=(-0.1, 0.1),aspect='auto');ax.set_xticks([]);ax.set_yticks([]);
+plt.title('Denoised (KSVD, SNR=%.4g dB)'%dl.snr(dc,d2,2));
+ax=fig.add_subplot(3, 2, 6)
+plt.imshow(noi2.transpose(0,2,1).reshape(n1,n2*n3),cmap='jet',clim=(-0.1, 0.1),aspect='auto');ax.set_xticks([]);ax.set_yticks([]);
+plt.title('Noise (KSVD)');
+plt.savefig('test_pyseisdl_sgk3d.png',format='png',dpi=300);
+plt.show()
 
 
 

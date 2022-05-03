@@ -1,3 +1,4 @@
+import numpy as np
 def sgk_denoise(din,mode,l,s,perc,param):
 	#sgk_denoise: SGK algorithm for 2D and 3D denoising
 	# BY Yangkang Chen
@@ -41,7 +42,9 @@ def sgk_denoise(din,mode,l,s,perc,param):
 	# Zu, S., H. Zhou, R. Wu, M. Jiang, and Y. Chen, 2019, Dictionary learning based on dip patch selection training for random noise attenuation, Geophysics, 84, V169?V183.
 	# Zu, S., H. Zhou, R. Wu, and Y. Chen, 2019, Hybrid-sparsity constrained dictionary learning for iterative deblending of extremely noisy simultaneous-source data, IEEE Transactions on Geoscience and Remote Sensing, 57, 2249-2262.
 	# etc. 
-
+	from .sgk import sgk
+	from .patch import patch2d,patch2d_inv,patch3d,patch3d_inv
+	from .threshold import pthresh
 	[n1,n2,n3]=din.shape;
 	l1=l[0];
 	l2=l[1];
@@ -54,64 +57,69 @@ def sgk_denoise(din,mode,l,s,perc,param):
 	#initialization
 	#[c1,c2,c3]: redundancy of the initial atom in 1st,2nd,3rd dimensions
 	#[l1,l2,l3]: patch sizes and the atom sizes in each dimension
-	if ~isfield(param,'D')
-    	if isfield(param,'K')
-        	if n3==1
-            	c1=ceil(sqrt(param.K));
-            	c2=c1;
-        	else
-            	c1=round(param.K.^(1/3.0));
-            	c2=c1;
-            	c3=c1;
-    	else
-        	c1=l1;
-        	c2=l2;
-        	c3=l3;
+	if not ('D' in param):
+		if 'K' in param:
+			if n3==1:
+				c1=np.ceil(np.sqrt(param['K']));c1=int(c1);
+				c2=c1;
+			else:
+				c1=np.round(np.power(param['K'],(1/3.0)));c1=int(c1);
+				c2=c1;
+				c3=c1;
+		else:
+			c1=l1;
+			c2=l2;
+			c3=l3;
 
-    
-    	dct1=zeros(l1,c1);
-    	for k=0:1:c1-1
-        	V=cos([0:1:l1-1]'*k*pi/c1);
-        	if k>0
-            	V=V-mean(V);
-        	dct1(:,k+1)=V/norm(V);
-    
-    	dct2=zeros(l2,c2);
-    	for k=0:1:c2-1
-        	V=cos([0:1:l2-1]'*k*pi/c2);
-        	if k>0
-            	V=V-mean(V);
-        	dct2(:,k+1)=V/norm(V);
-    
-    	if n3~=1
-        	dct3=zeros(l3,c3);
-        	for k=0:1:c3-1
-            	V=cos([0:1:l3-1]'*k*pi/c3);
-            	if k>0
-                	V=V-mean(V);
-            	dct3(:,k+1)=V/norm(V);
-    
-    	if n3==1:
-        	DCT=kron(dct1,dct2);	#2D DCT dictionary (l1*l2,c1*c2)
-    	else:
-        	DCT=kron(kron(dct1,dct2),dct3);	#3D DCT dictionary (l1*l2*l3,c1*c2*c3)
-    	param['D']=DCT;
+		dct1=np.zeros([l1,c1]);
+		for k in range(0,c1):
+			tmp=np.arange(l1);
+			tmp=tmp[...,None]; #column vector
+			V=np.cos(tmp*k*np.pi/c1); 
+			if k>0:
+				V=V-np.mean(V);
+			dct1[:,k]=V.squeeze()/np.linalg.norm(V);
+	
+		dct2=np.zeros([l2,c2]);
+		for k in range(0,c2):
+			tmp=np.arange(l2);
+			tmp=tmp[...,None]; #column vector
+			V=np.cos(tmp*k*np.pi/c2);
+			if k>0:
+				V=V-np.mean(V);
+			dct2[:,k]=V.squeeze()/np.linalg.norm(V);
+	
+		if n3!=1:
+			dct3=np.zeros([l3,c3]);
+			for k in range(0,c3):
+				tmp=np.arange(l3);
+				tmp=tmp[...,None]; #column vector
+				V=np.cos(tmp*k*np.pi/c3);
+				if k>0:
+					V=V-np.mean(V);
+				dct3[:,k]=V.squeeze()/np.linalg.norm(V);
+	
+		if n3==1:
+			DCT=np.kron(dct1,dct2);	#2D DCT dictionary (l1*l2,c1*c2)
+		else:
+			DCT=np.kron(np.kron(dct1,dct2),dct3);	#3D DCT dictionary (l1*l2*l3,c1*c2*c3)
+		param['D']=DCT;
 
 	#SGK
 	if n3==1:
-    	X=patch(din,mode,l1,l2,s1,s2);
-    	[Dsgk,Gsgk]=sgk(X,param);
-    	Gsgkc=Gsgk;
-    	Gsgk=pthresh(Gsgkc,'ph',perc);
-    	X2=Dsgk*Gsgk;
-    	dout=patch_inv(X2,mode,n1,n2,l1,l2,s1,s2);
+		X=patch2d(din,mode,l1,l2,s1,s2);
+		[Dsgk,Gsgk]=sgk(X,param);
+		Gsgkc=Gsgk;
+		Gsgk,thr=pthresh(Gsgkc,'ph',perc);
+		X2=np.matmul(Dsgk,Gsgk);
+		dout=patch2d_inv(X2,mode,n1,n2,l1,l2,s1,s2);
 	else:
-    	X=patch3d(din,mode,l1,l2,l3,s1,s2,s3);
-    	[Dsgk,Gsgk]=sgk(X,param);
-    	Gsgkc=Gsgk;
-    	Gsgk=pthresh(Gsgkc,'ph',perc);
-    	X2=Dsgk*Gsgk;
-    	dout=patch3d_inv(X2,mode,n1,n2,n3,l1,l2,l3,s1,s2,s3);
+		X=patch3d(din,mode,l1,l2,l3,s1,s2,s3);
+		[Dsgk,Gsgk]=sgk(X,param);
+		Gsgkc=Gsgk;
+		Gsgk,thr=pthresh(Gsgkc,'ph',perc);
+		X2=np.matmul(Dsgk,Gsgk);
+		dout=patch3d_inv(X2,mode,n1,n2,n3,l1,l2,l3,s1,s2,s3);
 
 	return dout,Dsgk,Gsgkc,DCT
 

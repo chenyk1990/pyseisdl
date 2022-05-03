@@ -1,15 +1,22 @@
 def snr(g,f,mode=1):
-	#snr: calculate the SNR
-	#
-	#The definition of SNR can be found in 
-	#Chen and Fomel, 2015, Random noise attenuation using local
-	#signal-and-noise orthogonalization, Geophysics.
-	#
-	#Author: Yangkang Chen
-	#g: ground truth image
-	#f: noisy/restored image
-	#mode:1->2D SNR, 2->3D SNR
-
+	"""
+	SNR: calculate the signal-to-noise ratio (SNR)
+	
+	INPUT
+	g: 		ground truth image
+	f: 		noisy/restored image
+	mode:	1->2D SNR, 2->3D SNR
+	
+	OUTPUT
+	snr: 	SNR value
+	
+	The definition of SNR can be found in 
+	Chen and Fomel, 2015, Random noise attenuation using local
+	signal-and-noise orthogonalization, Geophysics.
+	
+	Author: Yangkang Chen, 2015
+	"""
+	
 	import numpy as np
 
 	if g.ndim==2:
