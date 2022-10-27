@@ -18,7 +18,7 @@ def read(*names, **kwargs):
 
 setup(
     name="pyseisdl",
-    version="0.0.0",
+    version="0.0.1",
     license='GNU General Public License, Version 3 (GPLv3)',
     description="A python package for different dictionary learning methods and their applications in seismology. DL has a variety of applications in seismology, including but not limited to seismic denoising, seismic reconstruction, seismic diffraction separation, constrained LSRTM, constrained FWI, etc.",
     long_description=long_description,

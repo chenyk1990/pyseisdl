@@ -8,7 +8,7 @@
     (http://www.gnu.org/copyleft/gpl.html)
 """
 
-__version__ = "0.0.0"
+__version__ = "0.0.1"
 
 from .ksvd import ksvd
 from .sgk import sgk
