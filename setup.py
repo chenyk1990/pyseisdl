@@ -19,7 +19,7 @@ def read(*names, **kwargs):
 setup(
     name="pyseisdl",
     version="0.0.1",
-    license='GNU General Public License, Version 3 (GPLv3)',
+    license='MIT License',
     description="A python package for different dictionary learning methods and their applications in seismology. DL has a variety of applications in seismology, including but not limited to seismic denoising, seismic reconstruction, seismic diffraction separation, constrained LSRTM, constrained FWI, etc.",
     long_description=long_description,
     author="pyseisdl developing team",
@@ -39,8 +39,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: Implementation :: CPython",
         "Topic :: Scientific/Engineering",
-        "Topic :: Scientific/Engineering :: Physics",
-        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)"
+        "Topic :: Scientific/Engineering :: Physics"
     ],
     keywords=[
         "seismology", "exploration seismology", "array seismology", "denoising", "science", "signal-to-noise ratio", "dictionary learning"
