@@ -41,8 +41,7 @@ BibTeX:
 -----------
 
 ## License
-    GNU General Public License, Version 3
-    (http://www.gnu.org/copyleft/gpl.html)   
+    MIT License 
 
 -----------
 
