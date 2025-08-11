@@ -52,7 +52,10 @@ def ksvd(X,param):
 			E=E0+np.matmul(np.expand_dims(D[:,ik],1),np.expand_dims(G[ik,:],0));
 			inds,=np.where(G[ik,:]!=0);
 			R=E[:,inds];
-			[u,s,v]=scipy.linalg.svd(R);
+			if R.size>20000:
+				[u,s,v]=scipy.sparse.linalg.svds(R,1);
+			else:
+				[u,s,v]=scipy.linalg.svd(R);
 			
 			#scipy.sparse.linalg.svds  ?
 			if u.size!=0:
