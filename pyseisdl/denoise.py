@@ -48,7 +48,15 @@ def sgk_denoise(din,mode,l,s,perc,param):
 	from .sgk import sgk
 	from .patch import patch2d,patch2d_inv,patch3d,patch3d_inv
 	from .threshold import pthresh
-	[n1,n2,n3]=din.shape;
+	
+	
+	if np.ndim(din)==2:
+		[n1,n2]=din.shape;
+		n3=1;
+	else:
+		[n1,n2,n3]=din.shape;
+	
+	
 	l1=l[0];
 	l2=l[1];
 	l3=l[2];
@@ -110,19 +118,19 @@ def sgk_denoise(din,mode,l,s,perc,param):
 
 	#SGK
 	if n3==1:
-		X=patch2d(din,mode,l1,l2,s1,s2);
+		X=patch2d(din,l1,l2,s1,s2,mode).T;
 		[Dsgk,Gsgk]=sgk(X,param);
 		Gsgkc=Gsgk;
 		Gsgk,thr=pthresh(Gsgkc,'ph',perc);
-		X2=np.matmul(Dsgk,Gsgk);
-		dout=patch2d_inv(X2,mode,n1,n2,l1,l2,s1,s2);
+		X2=np.matmul(Dsgk,Gsgk).T;
+		dout=patch2d_inv(X2,n1,n2,l1,l2,s1,s2,mode);
 	else:
-		X=patch3d(din,mode,l1,l2,l3,s1,s2,s3);
+		X=patch3d(din,l1,l2,l3,s1,s2,s3,mode)[:,:,0].T;
 		[Dsgk,Gsgk]=sgk(X,param);
 		Gsgkc=Gsgk;
 		Gsgk,thr=pthresh(Gsgkc,'ph',perc);
-		X2=np.matmul(Dsgk,Gsgk);
-		dout=patch3d_inv(X2,mode,n1,n2,n3,l1,l2,l3,s1,s2,s3);
+		X2=np.matmul(Dsgk,Gsgk).T;
+		dout=patch3d_inv(X2,n1,n2,n3,l1,l2,l3,s1,s2,s3,mode);
 
 	return dout,Dsgk,Gsgkc,DCT
 
@@ -174,7 +182,11 @@ def ksvd_denoise(din,mode,l,s,perc,param):
 	from .ksvd import ksvd
 	from .patch import patch2d,patch2d_inv,patch3d,patch3d_inv
 	from .threshold import pthresh
-	[n1,n2,n3]=din.shape;
+	if np.ndim(din)==2:
+		[n1,n2]=din.shape;
+		n3=1;
+	else:
+		[n1,n2,n3]=din.shape;
 	l1=l[0];
 	l2=l[1];
 	l3=l[2];
@@ -236,18 +248,18 @@ def ksvd_denoise(din,mode,l,s,perc,param):
 
 	#KSVD
 	if n3==1:
-		X=patch2d(din,mode,l1,l2,s1,s2);
-		[Dsgk,Gsgk]=ksvd(X,param);
-		Gksvdc=Gksvd;
-		Gksvd,thr=pthresh(Gksvdc,'ph',perc);
-		X2=np.matmul(Dksvd,Gksvd);
-		dout=patch2d_inv(X2,mode,n1,n2,l1,l2,s1,s2);
-	else:
-		X=patch3d(din,mode,l1,l2,l3,s1,s2,s3);
+		X=patch2d(din,l1,l2,s1,s2,mode).T;
 		[Dksvd,Gksvd]=ksvd(X,param);
 		Gksvdc=Gksvd;
 		Gksvd,thr=pthresh(Gksvdc,'ph',perc);
-		X2=np.matmul(Dksvd,Gksvd);
-		dout=patch3d_inv(X2,mode,n1,n2,n3,l1,l2,l3,s1,s2,s3);
+		X2=np.matmul(Dksvd,Gksvd).T;
+		dout=patch2d_inv(X2,n1,n2,l1,l2,s1,s2,mode);
+	else:
+		X=patch3d(din,l1,l2,l3,s1,s2,s3,mode)[:,:,0].T;
+		[Dksvd,Gksvd]=ksvd(X,param);
+		Gksvdc=Gksvd;
+		Gksvd,thr=pthresh(Gksvdc,'ph',perc);
+		X2=np.matmul(Dksvd,Gksvd).T;
+		dout=patch3d_inv(X2,n1,n2,n3,l1,l2,l3,s1,s2,s3,mode);
 
 	return dout,Dksvd,Gksvdc,DCT
