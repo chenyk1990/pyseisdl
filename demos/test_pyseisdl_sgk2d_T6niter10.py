@@ -13,14 +13,12 @@
 #  GNU General Public License for more details: http://www.gnu.org/licenses/
 #  
 ## generate synthetic data
-#This synthetic data was used in Huang et al., 2016, Damped multichannel singular spectrum analysis for 3D random noise attenuation, Geophysics, 81, V261-V270.
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pyseisdl as dl #dl: dictionary learning
 import time
 ## generate the synthetic data
-
-
 def gensyn(noise=False,seed=202122,var=0.2):
 	'''
 	gensyn: quickly generate the representative synthetic data used in the paper

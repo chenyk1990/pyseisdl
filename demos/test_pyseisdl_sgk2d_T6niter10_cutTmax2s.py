@@ -12,14 +12,10 @@
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details: http://www.gnu.org/licenses/
 #  
-## generate synthetic data
-#This synthetic data was used in Huang et al., 2016, Damped multichannel singular spectrum analysis for 3D random noise attenuation, Geophysics, 81, V261-V270.
 import numpy as np
 import matplotlib.pyplot as plt
 import pyseisdl as dl #dl: dictionary learning
 import time
-## generate the synthetic data
-
 
 ### Load the data from Lucas Aires (https://github.com/aaspip/data/blob/main/diff2_cutTmax2s_SR0p5.su)
 import obspy
