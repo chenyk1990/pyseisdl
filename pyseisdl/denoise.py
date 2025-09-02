@@ -115,7 +115,8 @@ def sgk_denoise(din,mode,l,s,perc,param):
 		else:
 			DCT=np.kron(np.kron(dct1,dct2),dct3);	#3D DCT dictionary (l1*l2*l3,c1*c2*c3)
 		param['D']=DCT;
-
+	else:
+		DCT=param['D']
 	#SGK
 	if n3==1:
 		X=patch2d(din,l1,l2,s1,s2,mode).T;
@@ -245,7 +246,10 @@ def ksvd_denoise(din,mode,l,s,perc,param):
 		else:
 			DCT=np.kron(np.kron(dct1,dct2),dct3);	#3D DCT dictionary (l1*l2*l3,c1*c2*c3)
 		param['D']=DCT;
-
+		
+	else:
+		DCT=param['D']
+		
 	#KSVD
 	if n3==1:
 		X=patch2d(din,l1,l2,s1,s2,mode).T;
