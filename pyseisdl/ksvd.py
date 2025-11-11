@@ -36,7 +36,7 @@ def ksvd(X,param):
 	else:
 		K=param['D'].shape[1];	#dictionary size: number of atoms
 
-	D=param['D'][:,0:K];
+	D=param['D'][:,0:K].copy();
 
 	for iter in range(0,niter):
 	
