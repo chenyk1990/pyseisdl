@@ -1,4 +1,5 @@
 import numpy as np
+
 def ksvd(X,param):
 	"""
 	KSVD: the KSVD algorithm
@@ -67,6 +68,87 @@ def ksvd(X,param):
 
 	return D,G
 
+
+def fast_ksvd(X,param):
+	"""
+	KSVD: the KSVD algorithm with faster OMP implemmentation
+	BY Yangkang Chen
+	Jan, 2020
+	Modified by Lucas Aires on Jan, 2026
+	
+	INPUT
+	X:     input training samples
+	param: parameter struct
+	  param.mode=1;   	#1: sparsity; 0: error
+	  param.niter=10; 	#number of SGK iterations to perform; default: 10
+	  param.D=DCT;    	#initial D
+	  param.T=3;      	#sparsity level
+	
+	OUTPUT
+	D:    learned dictionary
+	G:    sparse coefficients
+	
+	for X=DG
+	size of X: MxN
+	size of D: MxK
+	size of G: KxN
+	
+	DEMO
+	demos/test_pyseisdl_sgk3d.py
+	"""
+    import scipy.sparse.linalg
+    import scipy.linalg
+
+
+    T=param['T'];    #T=1;     #requred by SGK
+    niter=param['niter'];
+    mode=param['mode'];
+    if 'K' in param:
+        K=param['K'];
+    else:
+        K=param['D'].shape[1];    #dictionary size: number of atoms
+
+    D=param['D'][:,0:K].copy();
+
+    for iter in range(0,niter):
+    
+        if mode==1:
+            G=omp_sparse_encode(D,X,T);
+        else:
+            pass;
+            
+        E0=X - np.matmul(D,G);#error before updating
+        for ik in range(0,K):     #KSVD iteration, K times SVD
+            E=E0+np.matmul(np.expand_dims(D[:,ik],1),np.expand_dims(G[ik,:],0));
+            inds,=np.where(G[ik,:]!=0);
+            R=E[:,inds];
+            if R.size>20000:
+                [u,s,v]=scipy.sparse.linalg.svds(R,1);
+            else:
+                [u,s,v]=scipy.linalg.svd(R);
+            
+            if u.size!=0:
+                D[:,ik]=u[:,0];
+                G[ik,inds]=s[0]*v[0,:];
+
+    G=omp_sparse_encode(D,X,T);
+
+    return D,G
+
+
+def omp_sparse_encode(D, X, T):
+	""" 
+	Faster implementation of OMP
+	"""
+	from sklearn.decomposition import sparse_encode
+
+    X_rows = X.T  # (n_samples, n_features)
+    Dic = D.T     # (n_atoms, n_features)
+    G = sparse_encode(X_rows, Dic, algorithm='omp', n_nonzero_coefs=T)
+
+    return G.T
+
+
 def ompN( D, X, K ):
 	"""
 	multi-column sparse coding
@@ -81,6 +163,7 @@ def ompN( D, X, K ):
 		G[:,i2]=omp0(D,X[:,i2],K);
 
 	return G
+
 
 def omp0( D, x, K ):
 	"""
