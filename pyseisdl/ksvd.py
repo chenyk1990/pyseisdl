@@ -96,9 +96,8 @@ def fast_ksvd(X,param):
 	DEMO
 	demos/test_pyseisdl_sgk3d.py
 	"""
-    import scipy.sparse.linalg
-    import scipy.linalg
-
+	import scipy.sparse.linalg
+	import scipy.linalg
 
     T=param['T'];    #T=1;     #requred by SGK
     niter=param['niter'];
