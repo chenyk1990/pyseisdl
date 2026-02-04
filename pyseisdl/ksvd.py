@@ -144,7 +144,7 @@ def omp_sparse_encode(D, X, T):
 	Dic = D.T     # (n_atoms, n_features)
 	G = sparse_encode(X_rows, Dic, algorithm='omp', n_nonzero_coefs=T)
 	
-    return G.T
+	return G.T
 
 
 def ompN( D, X, K ):
