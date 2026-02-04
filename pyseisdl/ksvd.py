@@ -99,40 +99,38 @@ def fast_ksvd(X,param):
 	import scipy.sparse.linalg
 	import scipy.linalg
 
-    T=param['T'];    #T=1;     #requred by SGK
-    niter=param['niter'];
-    mode=param['mode'];
-    if 'K' in param:
-        K=param['K'];
-    else:
-        K=param['D'].shape[1];    #dictionary size: number of atoms
+	T=param['T'];    #T=1;     #requred by SGK
+	niter=param['niter'];
+	mode=param['mode'];
+	if 'K' in param:
+		K=param['K'];
+	else:
+		K=param['D'].shape[1];    #dictionary size: number of atoms
 
-    D=param['D'][:,0:K].copy();
+	D=param['D'][:,0:K].copy();
+	for iter in range(0,niter):
+    	if mode==1:
+    		G=omp_sparse_encode(D,X,T);
+    	else:
+    		pass;
 
-    for iter in range(0,niter):
-    
-        if mode==1:
-            G=omp_sparse_encode(D,X,T);
-        else:
-            pass;
-            
-        E0=X - np.matmul(D,G);#error before updating
-        for ik in range(0,K):     #KSVD iteration, K times SVD
-            E=E0+np.matmul(np.expand_dims(D[:,ik],1),np.expand_dims(G[ik,:],0));
-            inds,=np.where(G[ik,:]!=0);
-            R=E[:,inds];
-            if R.size>20000:
-                [u,s,v]=scipy.sparse.linalg.svds(R,1);
-            else:
-                [u,s,v]=scipy.linalg.svd(R);
-            
-            if u.size!=0:
-                D[:,ik]=u[:,0];
-                G[ik,inds]=s[0]*v[0,:];
-
-    G=omp_sparse_encode(D,X,T);
-
-    return D,G
+		E0=X - np.matmul(D,G);#error before updating
+		for ik in range(0,K):     #KSVD iteration, K times SVD
+			E=E0+np.matmul(np.expand_dims(D[:,ik],1),np.expand_dims(G[ik,:],0));
+			inds,=np.where(G[ik,:]!=0);
+			R=E[:,inds];
+			if R.size>20000:
+				[u,s,v]=scipy.sparse.linalg.svds(R,1);
+			else:
+				[u,s,v]=scipy.linalg.svd(R);
+				
+			if u.size!=0:
+				D[:,ik]=u[:,0];
+				G[ik,inds]=s[0]*v[0,:];
+	
+	G=omp_sparse_encode(D,X,T);
+	
+	return D,G
 
 
 def omp_sparse_encode(D, X, T):
