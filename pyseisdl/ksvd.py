@@ -79,10 +79,10 @@ def fast_ksvd(X,param):
 	INPUT
 	X:     input training samples
 	param: parameter struct
-	  param.mode=1;   	#1: sparsity; 0: error
-	  param.niter=10; 	#number of SGK iterations to perform; default: 10
-	  param.D=DCT;    	#initial D
-	  param.T=3;      	#sparsity level
+	param.mode=1;   	#1: sparsity; 0: error
+	param.niter=10; 	#number of SGK iterations to perform; default: 10
+	param.D=DCT;    	#initial D
+	param.T=3;      	#sparsity level
 	
 	OUTPUT
 	D:    learned dictionary
@@ -92,30 +92,31 @@ def fast_ksvd(X,param):
 	size of X: MxN
 	size of D: MxK
 	size of G: KxN
-	
+		
 	DEMO
 	demos/test_pyseisdl_sgk3d.py
 	"""
 	import scipy.sparse.linalg
 	import scipy.linalg
-
-	T=param['T'];    #T=1;     #requred by SGK
+	
+	T=param['T'];	#T=1	#requred by SGK
 	niter=param['niter'];
 	mode=param['mode'];
+	
 	if 'K' in param:
 		K=param['K'];
 	else:
-		K=param['D'].shape[1];    #dictionary size: number of atoms
+		K=param['D'].shape[1];	#dictionary size: number of atoms
 
 	D=param['D'][:,0:K].copy();
 	for iter in range(0,niter):
-    	if mode==1:
-    		G=omp_sparse_encode(D,X,T);
-    	else:
-    		pass;
-
-		E0=X - np.matmul(D,G);#error before updating
-		for ik in range(0,K):     #KSVD iteration, K times SVD
+		if mode==1:
+			G=omp_sparse_encode(D,X,T);
+		else:
+			pass;
+		
+		E0=X - np.matmul(D,G); #error before updating
+		for ik in range(0,K):	#KSVD iteration, K times SVD
 			E=E0+np.matmul(np.expand_dims(D[:,ik],1),np.expand_dims(G[ik,:],0));
 			inds,=np.where(G[ik,:]!=0);
 			R=E[:,inds];
@@ -127,22 +128,22 @@ def fast_ksvd(X,param):
 			if u.size!=0:
 				D[:,ik]=u[:,0];
 				G[ik,inds]=s[0]*v[0,:];
-	
+				
 	G=omp_sparse_encode(D,X,T);
 	
 	return D,G
 
 
 def omp_sparse_encode(D, X, T):
-	""" 
+	"""
 	Faster implementation of OMP
 	"""
 	from sklearn.decomposition import sparse_encode
-
-    X_rows = X.T  # (n_samples, n_features)
-    Dic = D.T     # (n_atoms, n_features)
-    G = sparse_encode(X_rows, Dic, algorithm='omp', n_nonzero_coefs=T)
-
+	
+	X_rows = X.T  # (n_samples, n_features)
+	Dic = D.T     # (n_atoms, n_features)
+	G = sparse_encode(X_rows, Dic, algorithm='omp', n_nonzero_coefs=T)
+	
     return G.T
 
 
